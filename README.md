@@ -18,7 +18,7 @@ Tuotantokäyttöä varten käyttöliittymän voi kääntää komennolla `npm run
 ## API
 
 - `GET /api/groceries` — listaa ostokset.
-- `POST /api/groceries` — lisää ostoksen. JSON-runko: `{ "name": "Kaurajuoma", "quantity": 2 }`.
+- `POST /api/groceries` — lisää ostoksen. Määrän tulee olla positiivinen luku, enintään 99. JSON-runko: `{ "name": "Kaurajuoma", "quantity": 2 }`.
 - `PATCH /api/groceries/:id/purchased` — merkitsee ostoksen ostetuksi tai ostamattomaksi. JSON-runko: `{ "isPurchased": true }`.
 - `DELETE /api/groceries/:id` — poistaa ostoksen.
 

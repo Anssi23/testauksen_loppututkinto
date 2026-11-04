@@ -48,10 +48,10 @@ app.post("/api/groceries", async (request, response, next) => {
       .status(400)
       .json({ error: "Tuotteen nimen tulee olla 1–120 merkkiä." });
   }
-  if (!Number.isFinite(quantity) || quantity <= 0 || quantity > 999999) {
+  if (!Number.isFinite(quantity) || quantity <= 0 || quantity > 99) {
     return response
       .status(400)
-      .json({ error: "Määrän tulee olla positiivinen luku." });
+      .json({ error: "Määrän tulee olla positiivinen luku, enintään 99." });
   }
 
   try {

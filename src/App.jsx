@@ -95,7 +95,7 @@ function App() {
   function adjustQuantity(amount) {
     const current = Number(quantity);
     const next = Number.isFinite(current) ? current + amount : 1;
-    setQuantity(String(Math.min(999999, Math.max(1, next))));
+    setQuantity(String(Math.min(99, Math.max(1, next))));
   }
 
   const totalItems = groceries.length;
@@ -164,7 +164,7 @@ function App() {
                 </button>
                 <input
                   aria-label="Määrä"
-                  max="999999"
+                  max="99"
                   min="1"
                   onChange={(event) => setQuantity(event.target.value)}
                   required
@@ -175,7 +175,7 @@ function App() {
                 <button
                   aria-label="Lisää määrää"
                   className="quantity-button"
-                  disabled={Number(quantity) >= 999999}
+                  disabled={Number(quantity) >= 99}
                   onClick={() => adjustQuantity(1)}
                   type="button"
                 >
