@@ -2,12 +2,15 @@
   "name": "ruokaostokset",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "concurrently -k \"npm run dev:server\" \"npm run dev:client\"",
     "dev:client": "vite",
     "dev:server": "nodemon server/index.js",
     "build": "vite build",
-    "start": "node server/index.js"
+    "start": "node server/index.js",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "express": "^5.1.0",
@@ -19,6 +22,8 @@
     "@vitejs/plugin-react": "^4.7.0",
     "concurrently": "^9.2.0",
     "nodemon": "^3.1.10",
-    "vite": "^6.3.5"
+    "supertest": "^7.3.1",
+    "vite": "^6.3.5",
+    "vitest": "^5.1.0"
   }
 }
