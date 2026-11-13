@@ -567,7 +567,7 @@ describe("POST /api/groceries", () => {
     expect(response.body.name).toBe(shortName);
   });
   
-  it("TC-032: Tuotteen lisääminen nimen pituudella 0 merkkiä - hylätään", async () => {
+  it("TC-032: Tuotteen lisääminen, nimen pituudella 0 merkkiä - hylätään", async () => {
     const shortName = "";
     const response = await request(app)
       .post("/api/groceries")
@@ -581,7 +581,7 @@ describe("POST /api/groceries", () => {
     expect(groceriesResponse.body).toEqual([]);
   });
   
-  it("TC-033: Tuotteen lisääminen nimen pituudella 2 merkkiä - hyväksytään", async () => {
+  it("TC-033: Tuotteen lisääminen, nimen pituudella 2 merkkiä - hyväksytään", async () => {
     const shortName = "AB";
     const response = await request(app)
       .post("/api/groceries")
@@ -591,7 +591,7 @@ describe("POST /api/groceries", () => {
     expect(response.body.name).toBe(shortName);
   });
 
-   it("TC-034: Tuotteen lisääminen jossa määrä on tyhjä", async () => {
+   it("TC-034: Tuotteen lisääminen, jossa määrä on tyhjä - hylätään", async () => {
     const response = await request(app)
       .post("/api/groceries")
       .send({ name: "Kurkku", quantity: "" });
@@ -603,5 +603,54 @@ describe("POST /api/groceries", () => {
     expect(groceriesResponse.status).toBe(200);
     expect(groceriesResponse.body).toEqual([]);
   });
+    
+  it("TC-035: Tuotteen lisääminen, jossa määrä on merkkijono - hylätään", async () => {
+    const response = await request(app)
+      .post("/api/groceries")
+      .send({ name: "Kurkku", quantity: "abc" });
+
+    expect(response.status).toBe(400);
+    expect(response.body.error).toBe("Määrän tulee olla positiivinen luku, enintään 99.");
+
+    const groceriesResponse = await request(app).get("/api/groceries");
+    expect(groceriesResponse.status).toBe(200);
+    expect(groceriesResponse.body).toEqual([]);
+
+    //tarkistetaan, että ostoslistassa ei ole tuotetta, jonka määrä on merkkijono
+    expect(groceriesResponse.body).not.toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ name: "Kurkku" })
+      ])
+    );
+  });
   
+  it("TC-036: Tuotteen lisääminen, jossa nimi sisältää numeroita ja kirjaimia - hyväksytään", async () => {
+    const name = "Kurkku123";
+    const response = await request(app)
+      .post("/api/groceries")
+      .send({ name, quantity: 1 });
+
+    expect(response.status).toBe(201);
+    expect(response.body.name).toBe(name);
+  });
+ 
+  it("TC-037: Tuotteen lisääminen, jossa nimi sisältää pelkkiä numeroita - hyväksytään", async () => {
+    const name = "12345";
+    const response = await request(app)
+      .post("/api/groceries")
+      .send({ name, quantity: 1 });
+
+    expect(response.status).toBe(201);
+    expect(response.body.name).toBe(name);
+  });
+  
+  it("TC-038: Tuotteen lisääminen, jossa nimi sisältää bittikombinaation - hyväksytään", async () => {
+    const name = "010101";
+    const response = await request(app)
+      .post("/api/groceries")
+      .send({ name, quantity: 1 });
+
+    expect(response.status).toBe(201);
+    expect(response.body.name).toBe(name);
+  });
 });
