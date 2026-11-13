@@ -84,9 +84,17 @@ describe("POST /api/groceries", () => {
 
     expect(response.status).toBe(400);
     expect(response.body.error).toBe("Tuotteen nimen tulee olla 1–120 merkkiä.");
+
+    //tarkistetaan, että ostoslistassa ei ole tuotetta, jonka nimi on tyhjä
+    const groceries = await request(app).get("/api/groceries");
+    expect(groceries.status).toBe(200);
+    expect(groceries.body).not.toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ name: "" })
+      ])
+    );
   });
 
-//tuotteen lisääminen välilyönneillä
   it("TC-004: Tuotteen lisääminen pelkillä välilyönneillä nimessä", async () => {
     const response = await request(app)
       .post("/api/groceries")
@@ -94,9 +102,17 @@ describe("POST /api/groceries", () => {
 
     expect(response.status).toBe(400);
     expect(response.body.error).toBe("Tuotteen nimen tulee olla 1–120 merkkiä.");
-  });
 
-  //tuotteen lisääminen ilman määrää
+    //tarkistetaan, että ostoslistassa ei ole tuotetta, jonka nimi on pelkkiä välilyöntejä  
+    const groceries = await request(app).get("/api/groceries");
+    expect(groceries.status).toBe(200);
+    expect(groceries.body).not.toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ name: "   " })
+      ])
+    );
+  });
+  
   it("TC-005: Tuotteen lisääminen ilman määrää", async () => {
     const response = await request(app)
       .post("/api/groceries")
@@ -104,6 +120,15 @@ describe("POST /api/groceries", () => {
 
     expect(response.status).toBe(400);
     expect(response.body.error).toBe("Määrän tulee olla positiivinen luku, enintään 99.");
+
+    //tarkistetaan, että ostoslistassa ei ole tuotetta, jonka määrä puuttuu
+    const groceries = await request(app).get("/api/groceries");
+    expect(groceries.status).toBe(200);
+    expect(groceries.body).not.toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ name: "Kahvi" })
+      ])
+    );
   });
 
   it("TC-006: Tuotteen lisääminen ilman nimeä", async () => {
@@ -113,6 +138,15 @@ describe("POST /api/groceries", () => {
 
     expect(response.status).toBe(400);
     expect(response.body.error).toBe("Tuotteen nimen tulee olla 1–120 merkkiä.");
+
+    //tarkistetaan, että ostoslistassa ei ole tuotetta, jonka nimi puuttuu
+    const groceries = await request(app).get("/api/groceries");
+    expect(groceries.status).toBe(200);
+    expect(groceries.body).not.toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ quantity: 2 })
+      ])
+    );
   });
        
   it("TC-007: Nollamäärän hylkääminen", async () => {
@@ -122,6 +156,15 @@ describe("POST /api/groceries", () => {
 
     expect(response.status).toBe(400);
     expect(response.body.error).toBe("Määrän tulee olla positiivinen luku, enintään 99.");
+
+    //tarkistetaan, että ostoslistassa ei ole tuotetta, jonka määrä on nolla
+    const groceries = await request(app).get("/api/groceries");
+    expect(groceries.status).toBe(200);
+    expect(groceries.body).not.toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ name: "Omena" })
+      ])
+    );
   });
     
   it("TC-008: Negatiivisen määrän hylkääminen", async () => {
@@ -131,6 +174,15 @@ describe("POST /api/groceries", () => {
 
     expect(response.status).toBe(400);
     expect(response.body.error).toBe("Määrän tulee olla positiivinen luku, enintään 99.");
+
+    //tarkistetaan, että ostoslistassa ei ole tuotetta, jonka määrä on negatiivinen
+    const groceries = await request(app).get("/api/groceries");
+    expect(groceries.status).toBe(200);
+    expect(groceries.body).not.toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ name: "Banaani" })
+      ])
+    );
   });
   
   it("TC-009: Desimaalimäärän hylkääminen", async () => {
@@ -140,9 +192,17 @@ describe("POST /api/groceries", () => {
 
     expect(response.status).toBe(400);
     expect(response.body.error).toBe("Määrän tulee olla positiivinen luku, enintään 99.");
-  });
 
-  // tuotteen merkiseminen ostetuksi
+    //tarkistetaan, että ostoslistassa ei ole tuotetta, jonka määrä on desimaaliluku
+    const groceries = await request(app).get("/api/groceries");
+    expect(groceries.status).toBe(200);
+    expect(groceries.body).not.toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ name: "Peruna" })
+      ])
+    );
+  });
+     
   it("TC-010: Tuotteen merkitseminen ostetuksi", async () => {
     const addResponse = await request(app)
       .post("/api/groceries")
@@ -157,8 +217,7 @@ describe("POST /api/groceries", () => {
     expect(response.status).toBe(200);
     expect(response.body.is_purchased).toBe(1);
   });
-
-  //Ostetun tuotteen palauttaminen ostamattomaksi
+ 
   it("TC-011: Ostetun tuotteen palauttaminen ostamattomaksi", async () => {
     const addResponse = await request(app)
       .post("/api/groceries")
@@ -177,8 +236,7 @@ describe("POST /api/groceries", () => {
     expect(response.status).toBe(200);
     expect(response.body.is_purchased).toBe(0);
   });
-
-  // Ostetun tuotteen poistaminen
+  
   it("TC-012: Ostetun tuotteen poistaminen", async () => {
     const addResponse = await request(app)
       .post("/api/groceries")
@@ -195,8 +253,7 @@ describe("POST /api/groceries", () => {
 
     expect(response.status).toBe(204);
   });
-
-  // Ostamattoman tuotteen poistaminen
+  
   it("TC-013: Ostamattoman tuotteen poistaminen", async () => {
     const addResponse = await request(app)
       .post("/api/groceries")
@@ -409,8 +466,7 @@ describe("POST /api/groceries", () => {
     expect(response.status).toBe(404);
     expect(response.body.error).toBe("Tuotetta ei löytynyt.");
   });
-
-  //tyhjän ostoslistan käsittely
+  
   it("TC-022: Tyhjän ostoslistan näyttäminen", async () => {    
     const response = await request(app).get("/api/groceries");
     expect(response.status).toBe(200);
@@ -452,6 +508,10 @@ describe("POST /api/groceries", () => {
 
     expect(response.status).toBe(400);
     expect(response.body.error).toContain("Määrän tulee olla positiivinen luku, enintään 99.");
+
+    const groceriesResponse = await request(app).get("/api/groceries");
+    expect(groceriesResponse.status).toBe(200);
+    expect(groceriesResponse.body).toEqual([]);
   });
   
   it("TC-027: Tuotteen lisääminen määrällä 98 - hyväksytään", async () => {
@@ -460,6 +520,88 @@ describe("POST /api/groceries", () => {
       .send({ name: "Päärynä", quantity: 98 });
 
     expect(response.status).toBe(201);
-    expect(response.body.quantity).toBe(98);
+    expect(response.body.quantity).toBe(98);    
   });
+  
+  it("TC-028: Tuotteen lisääminen nimen pituudella 120 merkkiä - hyväksytään", async () => {
+    const longName = "A".repeat(120);
+    const response = await request(app)
+      .post("/api/groceries")
+      .send({ name: longName, quantity: 1 });
+
+    expect(response.status).toBe(201);
+    expect(response.body.name).toBe(longName);
+  });
+  
+  it("TC-029: Tuotteen lisääminen nimen pituudella 121 merkkiä - hylätään", async () => {
+    const longName = "A".repeat(121);
+    const response = await request(app)
+      .post("/api/groceries")
+      .send({ name: longName, quantity: 1 });
+
+    expect(response.status).toBe(400);
+    expect(response.body.error).toContain("Tuotteen nimen tulee olla 1–120 merkkiä.");
+
+    const groceriesResponse = await request(app).get("/api/groceries");
+    expect(groceriesResponse.status).toBe(200);
+    expect(groceriesResponse.body).toEqual([]);
+  });
+  
+  it("TC-030: Tuotteen lisääminen nimen pituudella 119 merkkiä - hyväksytään", async () => {
+    const longName = "A".repeat(119);
+    const response = await request(app)
+      .post("/api/groceries")
+      .send({ name: longName, quantity: 1 });
+
+    expect(response.status).toBe(201);
+    expect(response.body.name).toBe(longName);
+  });
+  
+  it("TC-031: Tuotteen lisääminen nimen pituudella 1 merkki - hyväksytään", async () => {
+    const shortName = "A";
+    const response = await request(app)
+      .post("/api/groceries")
+      .send({ name: shortName, quantity: 1 });
+
+    expect(response.status).toBe(201);
+    expect(response.body.name).toBe(shortName);
+  });
+  
+  it("TC-032: Tuotteen lisääminen nimen pituudella 0 merkkiä - hylätään", async () => {
+    const shortName = "";
+    const response = await request(app)
+      .post("/api/groceries")
+      .send({ name: shortName, quantity: 1 });
+
+    expect(response.status).toBe(400);
+    expect(response.body.error).toContain("Tuotteen nimen tulee olla 1–120 merkkiä.");
+
+    const groceriesResponse = await request(app).get("/api/groceries");
+    expect(groceriesResponse.status).toBe(200);
+    expect(groceriesResponse.body).toEqual([]);
+  });
+  
+  it("TC-033: Tuotteen lisääminen nimen pituudella 2 merkkiä - hyväksytään", async () => {
+    const shortName = "AB";
+    const response = await request(app)
+      .post("/api/groceries")
+      .send({ name: shortName, quantity: 1 });
+
+    expect(response.status).toBe(201);
+    expect(response.body.name).toBe(shortName);
+  });
+
+   it("TC-034: Tuotteen lisääminen jossa määrä on tyhjä", async () => {
+    const response = await request(app)
+      .post("/api/groceries")
+      .send({ name: "Kurkku", quantity: "" });
+
+    expect(response.status).toBe(400);
+    expect(response.body.error).toBe("Määrän tulee olla positiivinen luku, enintään 99.");
+
+    const groceriesResponse = await request(app).get("/api/groceries");
+    expect(groceriesResponse.status).toBe(200);
+    expect(groceriesResponse.body).toEqual([]);
+  });
+  
 });
