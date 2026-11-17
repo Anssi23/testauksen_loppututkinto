@@ -19,8 +19,11 @@
     "sql.js": "^1.13.0"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
     "@vitejs/plugin-react": "^4.7.0",
     "concurrently": "^9.2.0",
+    "jsdom": "^31.0.1",
     "nodemon": "^3.1.10",
     "supertest": "^7.3.1",
     "vite": "^6.3.5",
